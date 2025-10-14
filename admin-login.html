@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login - DataSell Ghana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(135deg, #000000 0%, #111111 100%);
+        }
+        
+        .admin-login-box {
+            background: #222222;
+            padding: 3rem;
+            border-radius: 15px;
+            border: 3px solid #FFD700;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .admin-login-box h1 {
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-login-box h2 {
+            color: #FFFFFF;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+        }
+        
+        .admin-input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #FFD700;
+            background: #333333;
+            color: #FFFFFF;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .admin-button {
+            width: 100%;
+            padding: 15px;
+            background: #FFD700;
+            color: #000000;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+        
+        .admin-button:hover {
+            background: #000000;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+        }
+        
+        .error-message {
+            color: #ff4444;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .security-notice {
+            color: #FFD700;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            border: 1px solid #FFD700;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <section class="admin-login-container">
+        <div class="admin-login-box">
+            <h1>🔒 Admin Panel</h1>
+            <h2>DataSell Ghana - Secure Access</h2>
+            
+            <form id="adminLoginForm">
+                <input type="text" class="admin-input" id="adminUsername" placeholder="Admin Username" required>
+                <input type="password" class="admin-input" id="adminPassword" placeholder="Admin Password" required>
+                <button type="submit" class="admin-button">Access Admin Panel</button>
+            </form>
+            
+            <div id="errorMessage" class="error-message">
+                ❌ Invalid login credentials
+            </div>
+            
+            <div class="security-notice">
+                ⚠️ Restricted Area - Authorized Personnel Only
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Hardcoded admin credentials (in real app, this would be server-side)
+        const ADMIN_USERNAME = "fame";
+        const ADMIN_PASSWORD = "fame123"; // You can change this
+        
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                // Store login session
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminLoginTime', new Date().getTime());
+                
+                // Redirect to admin dashboard
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                // Show error message
+                document.getElementById('errorMessage').style.display = 'block';
+                
+                // Clear password field
+                document.getElementById('adminPassword').value = '';
+            }
+        });
+        
+        // Clear any existing admin session when loading login page
+        localStorage.removeItem('adminLoggedIn');
+    </script>
+</body>
+</html>
