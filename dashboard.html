@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Account - DataSell Ghana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .dashboard-section {
+            display: none;
+        }
+        
+        .dashboard-section.active {
+            display: block;
+        }
+        
+        .section-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .section-nav-btn {
+            background: #222222;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .section-nav-btn.active {
+            background: #FFD700;
+            color: #000000;
+        }
+        
+        .section-nav-btn:hover {
+            background: #FFD700;
+            color: #000000;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #000000 0%, #222222 100%);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px solid #FFD700;
+        }
+        
+        .welcome-section h1 {
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: #222222;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #FFD700;
+            text-align: center;
+        }
+        
+        .stat-number {
+            color: #FFD700;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #FFFFFF;
+            font-size: 0.9rem;
+        }
+        
+        .orders-section-content {
+            background: #222222;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+            margin-bottom: 2rem;
+        }
+        
+        .orders-section-content h2 {
+            color: #FFD700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #333333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .orders-table th {
+            background: #FFD700;
+            color: #000000;
+            padding: 1rem;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .orders-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #444444;
+            color: #FFFFFF;
+        }
+        
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #FFD700;
+            color: #000000;
+        }
+        
+        .status-delivered {
+            background: #27ae60;
+            color: #FFFFFF;
+        }
+        
+        .no-orders {
+            text-align: center;
+            color: #FFFFFF;
+            padding: 2rem;
+            font-style: italic;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .action-card {
+            background: #222222;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid #FFD700;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            border-color: #FFFFFF;
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-card h3 {
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-section-content {
+            background: #222222;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+        }
+        
+        .profile-section-content h2 {
+            color: #FFD700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-item {
+            background: #333333;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #FFD700;
+        }
+        
+        .info-label {
+            color: #FFD700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-value {
+            color: #FFFFFF;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .logout-btn {
+            background: #ff4444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        
+        .logout-btn:hover {
+            background: #cc0000;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem 0.5rem;
+            }
+            
+            .section-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .welcome-section {
+                padding: 1.5rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .user-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .action-card {
+                padding: 1.5rem;
+            }
+            
+            .orders-section-content,
+            .profile-section-content {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .orders-table {
+                font-size: 0.8rem;
+            }
+            
+            .orders-table th,
+            .orders-table td {
+                padding: 0.5rem;
+            }
+            
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-number {
+                font-size: 1.3rem;
+            }
+            
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">DataSell Ghana</div>
+            
+            <!-- Hamburger Menu -->
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="mtn-plans.html">MTN Plans</a>
+                <a href="#" onclick="showSection('overview')">Dashboard</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>Welcome to Your Dashboard!</h1>
+            <p>Manage your data purchases and track your orders</p>
+        </div>
+
+        <!-- Section Navigation -->
+        <div class="section-nav">
+            <button class="section-nav-btn active" onclick="showSection('overview')">📊 Overview</button>
+            <button class="section-nav-btn" onclick="showSection('orders')">📦 My Orders</button>
+            <button class="section-nav-btn" onclick="showSection('profile')">👤 My Profile</button>
+            <button class="section-nav-btn" onclick="window.location.href='mtn-plans.html'">📱 Buy Data</button>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overview-section" class="dashboard-section active">
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="window.location.href='mtn-plans.html'">
+                    <div class="action-icon">📱</div>
+                    <h3>Buy More Data</h3>
+                    <p>Purchase additional MTN data bundles</p>
+                </div>
+                
+                <div class="action-card" onclick="showSection('orders')">
+                    <div class="action-icon">📦</div>
+                    <h3>View Orders</h3>
+                    <p>Check your order history and status</p>
+                </div>
+                
+                <div class="action-card" onclick="showSection('profile')">
+                    <div class="action-icon">👤</div>
+                    <h3>My Profile</h3>
+                    <p>Manage your account information</p>
+                </div>
+            </div>
+
+            <!-- User Statistics -->
+            <div class="user-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingOrders">0</div>
+                    <div class="stat-label">Pending Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="deliveredOrders">0</div>
+                    <div class="stat-label">Delivered Orders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">GH₵ <span id="totalSpent">0</span></div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="orders-section" class="dashboard-section">
+            <div class="orders-section-content">
+                <h2>📦 Your Order History</h2>
+                <div id="userOrdersTable">
+                    <div class="no-orders">You haven't placed any orders yet. <a href="mtn-plans.html" style="color: #FFD700;">Start shopping!</a></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile-section" class="dashboard-section">
+            <div class="profile-section-content">
+                <h2>👤 Your Profile</h2>
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value" id="userEmail">Loading...</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Member Since</div>
+                        <div class="info-value" id="memberSince">Today</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Account Status</div>
+                        <div class="info-value" style="color: #27ae60;">Active</div>
+                    </div>
+                </div>
+                <center>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </center>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 DataSell Ghana. Official MTN Non-Expiry Data Reseller.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script>
+        // Initialize Notyf
+        const notyf = new Notyf({
+            duration: 4000,
+            position: {
+                x: 'right',
+                y: 'top',
+            },
+            types: [
+                {
+                    type: 'success',
+                    background: '#27ae60',
+                    icon: false
+                },
+                {
+                    type: 'error',
+                    background: '#e74c3c',
+                    icon: false
+                },
+                {
+                    type: 'warning',
+                    background: '#f39c12',
+                    icon: false
+                },
+                {
+                    type: 'info',
+                    background: '#3498db',
+                    icon: false
+                }
+            ]
+        });
+
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav')) {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+
+        // Section Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.section-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Update specific section data if needed
+            if (sectionName === 'orders') {
+                displayUserOrders();
+            } else if (sectionName === 'profile') {
+                updateProfile();
+            }
+        }
+
+        // Check if user is logged in
+        function checkUserAuth() {
+            const loggedIn = localStorage.getItem('userLoggedIn');
+            if (!loggedIn) {
+                notyf.error('Please login to access dashboard');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        // Get user's orders
+        function getUserOrders() {
+            const userEmail = localStorage.getItem('userEmail');
+            const allOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            
+            // Filter orders for current user
+            return allOrders.filter(order => order.customer === userEmail);
+        }
+        
+        // Update user statistics
+        function updateUserStats() {
+            const userOrders = getUserOrders();
+            const totalOrders = userOrders.length;
+            const pendingOrders = userOrders.filter(order => order.status === 'pending').length;
+            const deliveredOrders = userOrders.filter(order => order.status === 'delivered').length;
+            const totalSpent = userOrders.reduce((sum, order) => sum + order.price, 0);
+            
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('pendingOrders').textContent = pendingOrders;
+            document.getElementById('deliveredOrders').textContent = deliveredOrders;
+            document.getElementById('totalSpent').textContent = totalSpent.toFixed(2);
+        }
+        
+        // Display user's orders
+        function displayUserOrders() {
+            const userOrders = getUserOrders();
+            const ordersTable = document.getElementById('userOrdersTable');
+            
+            if (userOrders.length === 0) {
+                ordersTable.innerHTML = '<div class="no-orders">You haven\'t placed any orders yet. <a href="mtn-plans.html" style="color: #FFD700;">Start shopping!</a></div>';
+                return;
+            }
+            
+            let tableHTML = `
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Plan</th>
+                            <th>Price</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            userOrders.forEach(order => {
+                tableHTML += `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.plan}</td>
+                        <td>GH₵ ${order.price}</td>
+                        <td>${order.date}</td>
+                        <td>${order.time || ''}</td>
+                        <td>
+                            <span class="order-status status-${order.status}">
+                                ${order.status.toUpperCase()}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += '</tbody></table>';
+            ordersTable.innerHTML = tableHTML;
+        }
+        
+        // Update profile information
+        function updateProfile() {
+            const userEmail = localStorage.getItem('userEmail');
+            const memberSince = localStorage.getItem('userJoinDate') || new Date().toLocaleDateString();
+            
+            document.getElementById('userEmail').textContent = userEmail;
+            document.getElementById('memberSince').textContent = memberSince;
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('userEmail');
+            notyf.success('Logged out successfully');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+        
+         
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkUserAuth()) return;
+            
+            updateUserStats();
+            displayUserOrders();
+            updateProfile();
+            
+            // Store join date if not already stored
+            if (!localStorage.getItem('userJoinDate')) {
+                localStorage.setItem('userJoinDate', new Date().toLocaleDateString());
+            }
+            
+            notyf.success('Welcome to your dashboard!');
+        });
+    </script>
+</body>
+</html>
