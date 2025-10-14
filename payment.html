@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment - DataSell Ghana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-container {
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .payment-card {
+            background: #222222;
+            border: 3px solid #FFD700;
+            border-radius: 15px;
+            padding: 2rem;
+            color: white;
+            text-align: center;
+        }
+        
+        .order-summary {
+            background: #333;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #FFD700;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: #FFFFFF;
+        }
+        
+        .summary-label {
+            color: #FFD700;
+        }
+        
+        .summary-value {
+            font-weight: bold;
+        }
+        
+        .paystack-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #333;
+            border-radius: 10px;
+            border: 2px solid #FFD700;
+        }
+        
+        .paystack-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .paystack-title {
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .paystack-description {
+            color: #CCCCCC;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .pay-button {
+            background: #FFD700;
+            color: #000000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .pay-button:hover {
+            background: #000000;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+        }
+        
+        .back-button {
+            background: #666;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        .processing-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .processing-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #222222;
+            border: 3px solid #FFD700;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            color: white;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .processing-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #333;
+            border-top: 4px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-message {
+            color: #FFD700;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+        
+        .success-check {
+            color: #27ae60;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .error-icon {
+            color: #e74c3c;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .retry-button {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .transaction-details {
+            background: #333;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: left;
+        }
+        
+        .detail-item {
+            margin-bottom: 0.5rem;
+            color: #FFFFFF;
+        }
+        
+        .detail-label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            color: #27ae60;
+            font-size: 0.9rem;
+        }
+        
+        .professional-badge {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .payment-container {
+                padding: 1rem 0.5rem;
+            }
+            
+            .payment-card {
+                padding: 1.5rem;
+            }
+            
+            .order-summary {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .paystack-section {
+                padding: 1rem;
+                margin: 1.5rem 0;
+            }
+            
+            .pay-button {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+            
+            .processing-content {
+                padding: 2rem;
+                width: 95%;
+            }
+            
+            .processing-spinner {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .transaction-details {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .payment-card {
+                padding: 1rem;
+            }
+            
+            .processing-content {
+                padding: 1.5rem;
+            }
+            
+            .summary-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.2rem;
+            }
+            
+            .paystack-icon {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">DataSell Ghana</div>
+            
+            <!-- Hamburger Menu -->
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="mtn-plans.html">MTN Plans</a>
+                <a href="dashboard.html">My Account</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Payment Section -->
+    <section class="payment-container">
+        <div class="payment-card">
+            <div class="professional-badge"><i class="fas fa-lock"></i> SECURE PAYMENT GATEWAY</div>
+            <h1 style="color: #FFD700; margin-bottom: 2rem;">Complete Your Purchase</h1>
+            
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h3 style="color: #FFD700; margin-bottom: 1rem;">Order Summary</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Data Plan:</span>
+                    <span class="summary-value" id="summaryPlan">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">MTN Number:</span>
+                    <span class="summary-value" id="summaryNumber">-</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Amount:</span>
+                    <span class="summary-value" id="summaryAmount">-</span>
+                </div>
+            </div>
+
+            <!-- Paystack Payment Section -->
+            <div class="paystack-section">
+                <div class="paystack-icon"><i class="fas fa-credit-card"></i></div>
+                <div class="paystack-title">Secure Payment Processing</div>
+                <div class="paystack-description">
+                    Pay instantly with Mobile Money, Visa, MasterCard, or Bank Transfer
+                </div>
+                
+                <div class="security-badge">
+                    <span><i class="fas fa-lock"></i></span>
+                    <span>Secured by Paystack</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <button class="pay-button" id="payButton" onclick="processPayment()">
+                PROCEED TO SECURE PAYMENT
+            </button>
+            
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> Back to Plans
+            </button>
+        </div>
+    </section>
+
+    <!-- Processing Overlay -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="processing-content">
+            <div id="processingSpinner" class="processing-spinner"></div>
+            <div id="processingStatus" class="status-message">Processing your order...</div>
+            <div id="processingDetails"></div>
+            <button id="retryButton" class="retry-button" style="display: none;" onclick="retryPayment()">Retry Payment</button>
+            <button id="successButton" class="pay-button" style="display: none; margin-top: 1rem;" onclick="goToDashboard()">View My Orders</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 DataSell Ghana. Official MTN Non-Expiry Data Reseller.</p>
+    </footer>
+
+    <!-- Add HubNet Integration Scripts -->
+    <script src="js/hubnet.js"></script>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav')) {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+
+        // Paystack Configuration - LIVE PRODUCTION
+        const PAYSTACK_CONFIG = {
+            publicKey: 'pk_live_1ab0cbfd78adf80ea97911b53ca1bbfaee891316',
+            isLive: true
+        };
+
+        let currentOrder = null;
+        let userEmail = null;
+        let paystackLoaded = false;
+
+        // ========== LOAD PAYSTACK ==========
+        function loadPaystack() {
+            return new Promise((resolve, reject) => {
+                // Check if already loaded
+                if (typeof PaystackPop !== 'undefined') {
+                    paystackLoaded = true;
+                    resolve(PaystackPop);
+                    return;
+                }
+
+                // Create and load script
+                const script = document.createElement('script');
+                script.src = 'https://js.paystack.co/v1/inline.js';
+                script.async = true;
+                
+                script.onload = function() {
+                    // Give it a moment to initialize
+                    setTimeout(() => {
+                        if (typeof PaystackPop !== 'undefined') {
+                            paystackLoaded = true;
+                            console.log('✅ Paystack loaded successfully');
+                            resolve(PaystackPop);
+                        } else {
+                            reject(new Error('Paystack loaded but not initialized'));
+                        }
+                    }, 100);
+                };
+                
+                script.onerror = function() {
+                    reject(new Error('Failed to load Paystack script'));
+                };
+                
+                document.head.appendChild(script);
+            });
+        }
+
+        // ========== INITIALIZATION ==========
+        function initializePayment() {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (!isLoggedIn) {
+                alert('<i class="fas fa-lock"></i> Please login first to make a purchase');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load pending order
+            currentOrder = JSON.parse(localStorage.getItem('pendingOrder'));
+            userEmail = localStorage.getItem('userEmail');
+
+            if (!currentOrder) {
+                alert('<i class="fas fa-exclamation-circle"></i> No order found. Please select a plan first.');
+                window.location.href = 'mtn-plans.html';
+                return;
+            }
+
+            // Update order summary
+            updateOrderSummary();
+            updateNavigation();
+
+            // Pre-load Paystack in background
+            loadPaystack().catch(error => {
+                console.log('Paystack pre-load failed:', error);
+            });
+        }
+
+        function updateOrderSummary() {
+            document.getElementById('summaryPlan').textContent = `${currentOrder.plan} MTN Data`;
+            document.getElementById('summaryNumber').textContent = currentOrder.mtnNumber;
+            document.getElementById('summaryAmount').textContent = `GH₵ ${currentOrder.price}`;
+        }
+
+        function updateNavigation() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (isLoggedIn) {
+                document.getElementById('loginLink').style.display = 'none';
+                document.getElementById('registerLink').style.display = 'none';
+                document.getElementById('dashboardLink').style.display = 'block';
+                document.getElementById('logoutLink').style.display = 'block';
+            }
+        }
+
+        // ========== PAYMENT PROCESSING ==========
+        async function processPayment() {
+            // Disable button to prevent multiple clicks
+            document.getElementById('payButton').disabled = true;
+            document.getElementById('payButton').textContent = 'PROCESSING...';
+            
+            // Show processing overlay
+            showProcessing('Initializing secure payment...');
+
+            try {
+                // Load Paystack if not already loaded
+                if (!paystackLoaded) {
+                    showProcessing('Loading payment gateway...');
+                    await loadPaystack();
+                }
+                
+                await processPaystackPayment();
+            } catch (error) {
+                console.error('Payment processing error:', error);
+                showError('Payment failed: ' + error.message);
+                // Re-enable button on error
+                document.getElementById('payButton').disabled = false;
+                document.getElementById('payButton').textContent = 'PROCEED TO SECURE PAYMENT';
+            }
+        }
+
+        async function processPaystackPayment() {
+            // Generate unique reference
+            const reference = 'DSG-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+            
+            // Create order in localStorage first
+            const orderData = {
+                id: reference,
+                customer: userEmail,
+                plan: `${currentOrder.plan} MTN Data`,
+                price: currentOrder.price,
+                mtnNumber: currentOrder.mtnNumber,
+                status: 'pending',
+                paymentMethod: 'paystack',
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString(),
+                timestamp: new Date().getTime()
+            };
+
+            // Save order to localStorage
+            saveOrderToHistory(orderData);
+
+            // Configure Paystack with LIVE credentials
+            const handler = PaystackPop.setup({
+                key: PAYSTACK_CONFIG.publicKey,
+                email: userEmail,
+                amount: Math.round(currentOrder.price * 100), // Convert to kobo
+                currency: 'GHS',
+                ref: reference,
+                metadata: {
+                    custom_fields: [
+                        {
+                            display_name: "MTN Number",
+                            variable_name: "mtn_number",
+                            value: currentOrder.mtnNumber
+                        },
+                        {
+                            display_name: "Data Plan", 
+                            variable_name: "data_plan",
+                            value: currentOrder.plan
+                        }
+                    ]
+                },
+                callback: function(response) {
+                    // Payment successful
+                    showProcessing('Payment verified! Processing your data delivery...');
+                    
+                    // Process delivery
+                    processDeliveryAfterPayment(orderData, response)
+                        .then(() => console.log('Delivery completed'))
+                        .catch(error => {
+                            console.error('Delivery failed:', error);
+                            showError('Payment successful but delivery failed: ' + error.message);
+                        });
+                },
+                onClose: function() {
+                    // Payment cancelled
+                    showError('Payment was cancelled. Please try again.');
+                    // Re-enable button
+                    document.getElementById('payButton').disabled = false;
+                    document.getElementById('payButton').textContent = 'PROCEED TO SECURE PAYMENT';
+                }
+            });
+
+            handler.openIframe();
+        }
+
+        async function processDeliveryAfterPayment(orderData, paymentResponse) {
+            try {
+                // Update order status to paid
+                updateOrderStatus(orderData.id, 'paid');
+                
+                // Send to HubNet for automatic delivery
+                await deliverViaHubNet(orderData);
+                
+            } catch (error) {
+                console.error('Delivery error:', error);
+                showError('Payment successful but delivery failed: ' + error.message);
+                throw error;
+            }
+        }
+
+          // ========== HUBNET DELIVERY ==========
+        async function deliverViaHubNet(orderData) {
+            try {
+                showProcessing('Processing your data delivery...');
+
+                // Send order to HubNet
+                const hubnetResult = await hubnetAPI.placeDataOrder(
+                    orderData.mtnNumber,
+                    orderData.plan,
+                    orderData.id
+                );
+
+                if (hubnetResult.success) {
+                    // Delivery successful
+                    updateOrderStatus(orderData.id, 'delivered');
+                    orderData.hubnetTransactionId = hubnetResult.transactionId;
+                    orderData.deliveredAt = new Date().toLocaleString();
+                    
+                    // Save updated order
+                    saveOrderToHistory(orderData);
+                    
+                    showSuccess(orderData, hubnetResult);
+                } else {
+                    // Delivery failed
+                    updateOrderStatus(orderData.id, 'delivery_failed');
+                    orderData.deliveryError = hubnetResult.error;
+                    saveOrderToHistory(orderData);
+                    
+                    throw new Error(hubnetResult.error);
+                }
+
+            } catch (error) {
+                console.error('HubNet delivery error:', error);
+                updateOrderStatus(orderData.id, 'delivery_failed');
+                orderData.deliveryError = error.message;
+                saveOrderToHistory(orderData);
+                
+                throw error;
+            }
+        }
+
+        // ========== ORDER MANAGEMENT ==========
+        function saveOrderToHistory(orderData) {
+            let orders = JSON.parse(localStorage.getItem('userOrders')) || [];
+            // Remove existing order with same ID if any
+            orders = orders.filter(order => order.id !== orderData.id);
+            orders.push(orderData);
+            localStorage.setItem('userOrders', JSON.stringify(orders));
+            
+            // Also save to admin orders
+            saveToAdminOrders(orderData);
+        }
+
+        function saveToAdminOrders(orderData) {
+            let adminOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            // Remove existing order with same ID if any
+            adminOrders = adminOrders.filter(order => order.id !== orderData.id);
+            adminOrders.push(orderData);
+            localStorage.setItem('adminOrders', JSON.stringify(adminOrders));
+        }
+
+        function updateOrderStatus(orderId, status) {
+            // Update in user orders
+            let userOrders = JSON.parse(localStorage.getItem('userOrders')) || [];
+            const userOrderIndex = userOrders.findIndex(order => order.id === orderId);
+            if (userOrderIndex !== -1) {
+                userOrders[userOrderIndex].status = status;
+                localStorage.setItem('userOrders', JSON.stringify(userOrders));
+            }
+
+            // Update in admin orders
+            let adminOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            const adminOrderIndex = adminOrders.findIndex(order => order.id === orderId);
+            if (adminOrderIndex !== -1) {
+                adminOrders[adminOrderIndex].status = status;
+                localStorage.setItem('adminOrders', JSON.stringify(adminOrders));
+            }
+        }
+
+        // ========== UI MANAGEMENT ==========
+        function showProcessing(message) {
+            const overlay = document.getElementById('processingOverlay');
+            const status = document.getElementById('processingStatus');
+            const spinner = document.getElementById('processingSpinner');
+            const details = document.getElementById('processingDetails');
+            
+            status.textContent = message;
+            spinner.style.display = 'block';
+            details.innerHTML = '';
+            document.getElementById('retryButton').style.display = 'none';
+            document.getElementById('successButton').style.display = 'none';
+            overlay.style.display = 'block';
+        }
+
+        function showSuccess(orderData, hubnetResult) {
+            const status = document.getElementById('processingStatus');
+            const spinner = document.getElementById('processingSpinner');
+            const details = document.getElementById('processingDetails');
+            const successButton = document.getElementById('successButton');
+            
+            spinner.style.display = 'none';
+            status.innerHTML = '<div class="success-check"><i class="fas fa-check-circle"></i></div>Data Delivered Successfully!';
+            
+            details.innerHTML = `
+                <div class="transaction-details">
+                    <div class="detail-item"><span class="detail-label">Order ID:</span> ${orderData.id}</div>
+                    <div class="detail-item"><span class="detail-label">MTN Number:</span> ${orderData.mtnNumber}</div>
+                    <div class="detail-item"><span class="detail-label">Plan:</span> ${orderData.plan}</div>
+                    <div class="detail-item"><span class="detail-label">Transaction ID:</span> ${hubnetResult.transactionId || 'N/A'}</div>
+                    <div class="detail-item"><span class="detail-label">Amount:</span> GH₵ ${orderData.price}</div>
+                </div>
+                <p style="color: #27ae60; margin-top: 1rem;">
+                    <i class="fas fa-check-circle"></i> Your data has been delivered successfully!<br>
+                    <i class="fas fa-mobile-alt"></i> You will receive an SMS confirmation shortly.
+                </p>
+            `;
+            
+            successButton.style.display = 'block';
+            document.getElementById('retryButton').style.display = 'none';
+            
+            // Clear pending order
+            localStorage.removeItem('pendingOrder');
+        }
+
+        function showError(message) {
+            const status = document.getElementById('processingStatus');
+            const spinner = document.getElementById('processingSpinner');
+            const details = document.getElementById('processingDetails');
+            const retryButton = document.getElementById('retryButton');
+            
+            spinner.style.display = 'none';
+            status.innerHTML = '<div class="error-icon"><i class="fas fa-times-circle"></i></div>' + message;
+            details.innerHTML = '';
+            retryButton.style.display = 'block';
+            document.getElementById('successButton').style.display = 'none';
+        }
+
+        function retryPayment() {
+            document.getElementById('processingOverlay').style.display = 'none';
+            document.getElementById('payButton').disabled = false;
+            document.getElementById('payButton').textContent = 'PROCEED TO SECURE PAYMENT';
+        }
+
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
+        function goBack() {
+            window.location.href = 'mtn-plans.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('userLoggedIn');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'index.html';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePayment();
+        });
+    </script>
+</body>
+</html>

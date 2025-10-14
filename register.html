@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up - DataSell Ghana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 2rem;
+        }
+        
+        .auth-box {
+            background: #222222;
+            padding: 3rem;
+            border-radius: 15px;
+            border: 3px solid #FFD700;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .auth-box h1 {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-box h2 {
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.3rem;
+        }
+        
+        .auth-input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #FFD700;
+            background: #333333;
+            color: #FFFFFF;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .auth-input:focus {
+            outline: none;
+            border-color: #FFFFFF;
+            background: #444444;
+        }
+        
+        .auth-button {
+            width: 100%;
+            padding: 15px;
+            background: #FFD700;
+            color: #000000;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .auth-button:hover {
+            background: #000000;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+        }
+        
+        .auth-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #FFFFFF;
+        }
+        
+        .auth-links a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .loading {
+            color: #FFD700;
+            margin: 1rem 0;
+            text-align: center;
+            display: none;
+        }
+        
+        .error-message {
+            color: #ff4444;
+            margin: 1rem 0;
+            padding: 10px;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            margin: 1rem 0;
+            padding: 10px;
+            background: rgba(39, 174, 96, 0.1);
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        
+        .password-requirements {
+            color: #FFD700;
+            font-size: 0.8rem;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 1rem;
+                min-height: 70vh;
+            }
+            
+            .auth-box {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+            
+            .auth-box h1 {
+                font-size: 1.5rem;
+            }
+            
+            .auth-box h2 {
+                font-size: 1.1rem;
+            }
+            
+            .auth-input {
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            .auth-button {
+                padding: 12px;
+                font-size: 16px;
+                min-height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-box {
+                padding: 1.5rem 1rem;
+            }
+            
+            .auth-box h1 {
+                font-size: 1.3rem;
+            }
+            
+            .auth-box h2 {
+                font-size: 1rem;
+            }
+            
+            .password-requirements {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">DataSell Ghana</div>
+            
+            <!-- Hamburger Menu -->
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="mtn-plans.html">MTN Plans</a>
+                <a href="login.html" id="loginLink">Login</a>
+                <a href="register.html" id="registerLink">Sign Up</a>
+                <a href="dashboard.html" id="dashboardLink" style="display: none;">My Account</a>
+                <a href="#" id="logoutLink" style="display: none;" onclick="logout()">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Registration Form -->
+    <section class="auth-container">
+        <div class="auth-box">
+            <h1>DataSell Ghana</h1>
+            <h2>Create Your Account</h2>
+            
+            <form id="registerForm">
+                <div>
+                    <label style="color: #FFFFFF; display: block; margin-bottom: 5px;">Email Address</label>
+                    <input type="email" class="auth-input" id="email" placeholder="your.email@gmail.com" required>
+                </div>
+                
+                <div>
+                    <label style="color: #FFFFFF; display: block; margin-bottom: 5px;">Password</label>
+                    <input type="password" class="auth-input" id="password" placeholder="Create a password" required minlength="6">
+                    <div class="password-requirements">Password must be at least 6 characters</div>
+                </div>
+                
+                <div>
+                    <label style="color: #FFFFFF; display: block; margin-bottom: 5px;">Confirm Password</label>
+                    <input type="password" class="auth-input" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+
+                <button type="submit" class="auth-button" id="registerBtn">
+                    Create Account
+                </button>
+            </form>
+
+            <div id="loadingMessage" class="loading">
+                <i class="fas fa-sync-alt fa-spin"></i> Creating your account...
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <div class="auth-links">
+                <p>Already have an account? <a href="login.html">Login here</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 DataSell Ghana. Official MTN Non-Expiry Data Reseller.</p>
+    </footer>
+
+    <script>
+        // === YOUR FIREBASE CONFIG ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-uzPiEdPFF3Kpcc_z84Xf5K_K_aBTAow",
+            authDomain: "datasell-ghana.firebaseapp.com",
+            projectId: "datasell-ghana",
+            storageBucket: "datasell-ghana.firebasestorage.app",
+            messagingSenderId: "445930494627",
+            appId: "1:445930494627:web:bbc6d57dec368cdf1e3d16"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Track if we're processing registration
+        let isProcessingRegistration = false;
+
+        // Registration Form Handler
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!isProcessingRegistration) {
+                registerUser();
+            }
+        });
+
+        function registerUser() {
+            if (isProcessingRegistration) return;
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const registerBtn = document.getElementById('registerBtn');
+
+            // Validation
+            if (!validateForm(email, password, confirmPassword)) {
+                return;
+            }
+
+            isProcessingRegistration = true;
+            showLoading();
+            registerBtn.disabled = true;
+
+            // Create user with Firebase Auth
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // User created successfully
+                    const user = userCredential.user;
+                    showSuccess('<i class="fas fa-check-circle"></i> Account created successfully!');
+                    handleSuccessfulRegistration(user);
+                })
+                .catch((error) => {
+                    // Handle errors
+                    console.error('Registration error:', error);
+                    handleRegistrationError(error);
+                    registerBtn.disabled = false;
+                    isProcessingRegistration = false;
+                });
+        }
+
+        function validateForm(email, password, confirmPassword) {
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('<i class="fas fa-exclamation-circle"></i> Please enter a valid email address');
+                return false;
+            }
+
+            // Password length check
+            if (password.length < 6) {
+                showError('<i class="fas fa-exclamation-circle"></i> Password must be at least 6 characters long');
+                return false;
+            }
+
+            // Password match check
+            if (password !== confirmPassword) {
+                showError('<i class="fas fa-exclamation-circle"></i> Passwords do not match');
+                return false;
+            }
+
+            return true;
+        }
+
+        function handleSuccessfulRegistration(user) {
+            // Store user information
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('userEmail', user.email);
+            localStorage.setItem('userUid', user.uid);
+            localStorage.setItem('userJoinDate', new Date().toLocaleDateString());
+            localStorage.setItem('authMethod', 'email');
+
+            // Update navigation
+            updateNavigation();
+
+            // Redirect after success message
+            setTimeout(() => {
+                checkPendingOrderOrRedirect();
+            }, 2000);
+        }
+
+        function handleRegistrationError(error) {
+            let errorMessage = 'Registration failed. ';
+
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    errorMessage = '<i class="fas fa-exclamation-circle"></i> This email is already registered. Please login instead.';
+                    break;
+                case 'auth/invalid-email':
+                    errorMessage = '<i class="fas fa-exclamation-circle"></i> Please enter a valid email address.';
+                    break;
+                case 'auth/weak-password':
+                    errorMessage = '<i class="fas fa-exclamation-circle"></i> Password is too weak. Please use a stronger password.';
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = '<i class="fas fa-exclamation-circle"></i> Network error. Please check your connection and try again.';
+                    break;
+                default:
+                    errorMessage += error.message;
+            }
+
+            showError(errorMessage);
+        }
+
+        function checkPendingOrderOrRedirect() {
+            const pendingOrder = localStorage.getItem('pendingOrder');
+            if (pendingOrder) {
+                const order = JSON.parse(pendingOrder);
+                createOrder(order.plan, order.price);
+                localStorage.removeItem('pendingOrder');
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        function showLoading() {
+            hideMessages();
+            document.getElementById('loadingMessage').style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorMessage').innerHTML = message;
+        }
+
+        function showSuccess(message) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('successMessage').innerHTML = message;
+        }
+
+        function hideMessages() {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Navigation
+        function updateNavigation() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            const loginLink = document.getElementById('loginLink');
+            const registerLink = document.getElementById('registerLink');
+            const dashboardLink = document.getElementById('dashboardLink');
+            const logoutLink = document.getElementById('logoutLink');
+            
+            if (isLoggedIn) {
+                if (loginLink) loginLink.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                if (dashboardLink) dashboardLink.style.display = 'block';
+                if (logoutLink) logoutLink.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            auth.signOut().then(() => {
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userUid');
+                localStorage.removeItem('authMethod');
+                window.location.href = 'index.html';
+            });
+        }
+
+        // Hamburger Menu Functionality
+        function initHamburgerMenu() {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (hamburger && navLinks) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
+                
+                // Close menu when clicking on links
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        navLinks.classList.remove('active');
+                    });
+                });
+            }
+        }
+
+        // Order creation function
+        function createOrder(planSize, price) {
+            const orderId = 'DSG' + Date.now();
+            const userEmail = localStorage.getItem('userEmail');
+            
+            const newOrder = {
+                id: orderId,
+                customer: userEmail,
+                customerUid: localStorage.getItem('userUid'),
+                plan: planSize + ' MTN Non-Expiry Data',
+                price: price,
+                date: new Date().toLocaleDateString('en-GB'),
+                time: new Date().toLocaleTimeString('en-GB'),
+                status: 'pending_payment',
+                timestamp: new Date().getTime()
+            };
+            
+            let adminOrders = JSON.parse(localStorage.getItem('adminOrders')) || [];
+            adminOrders.unshift(newOrder);
+            localStorage.setItem('adminOrders', JSON.stringify(adminOrders));
+            
+            alert(`<i class="fas fa-check-circle"></i> Order #${orderId} created!\n\n<i class="fas fa-phone"></i> Contact us to complete payment via Mobile Money`);
+            window.location.href = 'dashboard.html';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigation();
+            hideMessages();
+            initHamburgerMenu();
+
+            // Check if user is already logged in via localStorage (more reliable)
+            const isLoggedIn = localStorage.getItem('userLoggedIn');
+            if (isLoggedIn === 'true') {
+                // User is already logged in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Also check Firebase auth state as backup
+            auth.onAuthStateChanged((user) => {
+                if (user && window.location.pathname.includes('register.html')) {
+                    // User is already logged in via Firebase, ensure localStorage is synced
+                    localStorage.setItem('userLoggedIn', 'true');
+                    localStorage.setItem('userEmail', user.email);
+                    localStorage.setItem('userUid', user.uid);
+                    updateNavigation();
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 500);
+                }
+            });
+        });
+    </script>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
